@@ -1,4 +1,30 @@
 
+jc = require 'json-criteria'
+
+matches = (a, t) ->
+  switch typeof t
+
+    when 'string'
+      switch t
+
+        when 'undefined', 'boolean', 'number', 'string', 'symbol', 'function', 'object'
+          typeof a is t
+
+        when 'object!'
+          a? and typeof a is 'object'
+
+        else
+          a instanceof global[t]
+
+    when 'function'
+      t a
+
+    when 'object'
+      jc.test a, t
+
+    else
+      false
+
 # Left-shift optional function arguments.
 #
 # @example
@@ -23,17 +49,28 @@ lshift = (as) ->
     if Array.isArray ai then [ vi, ti, di ] = ai else { vi, ti, di } = ai
     if Array.isArray aj then [ vj, tj, dj ] = aj else { vj, tj, dj } = aj
 
-    if (
-      ((typeof ti is 'string') and (typeof vj is ti)) or
-      ((typeof ti is 'function') and (vj instanceof ti))
-    )
+    if matches vj, ti
+      # console.log 'y', vj, ti
       r.push vj
       i += 1
       j += 1
     else
+      # console.log 'n'
       r.push di
       i += 1
+  # console.log r
   r
+
+# d = ->
+# f = (onoff, msg, done) ->
+#   [ onoff, msg, done ] = lshift [
+#     [ onoff, { $in: [ 'on', 'off' ] }, 'off' ]
+#     [ msg, 'string', null ]
+#     [ done, 'function' ]
+#   ]
+#   [ onoff, msg, done ]
+#
+# f d
 
 module.exports = {
   lshift

@@ -56,3 +56,22 @@ describe 'lshift', ->
 
     it 'should work with combination #7', ->
       assert.deepEqual [ 'N/A', {}, undefined ], find()
+
+  describe 'json criteria', ->
+
+    it 'should work', ->
+
+      d = ->
+      f = (onoff, msg, done) ->
+        [ onoff, msg, done ] = $.lshift [
+          [ onoff, { $in: [ 'on', 'off' ] }, 'off' ]
+          [ msg, 'string', null ]
+          [ done, 'function' ]
+        ]
+        [ onoff, msg, done ]
+
+      assert.deepEqual [ 'off', null, d ], f d
+      assert.deepEqual [ 'on', null, d ], f 'on', d
+      assert.deepEqual [ 'off', null, d ], f 'off', d
+      assert.deepEqual [ 'off', 'message', d ], f 'message', d
+      assert.deepEqual [ 'on', 'message', d ], f 'on', 'message', d
