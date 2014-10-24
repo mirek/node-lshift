@@ -23,7 +23,10 @@ lshift = (as) ->
     if Array.isArray ai then [ vi, ti, di ] = ai else { vi, ti, di } = ai
     if Array.isArray aj then [ vj, tj, dj ] = aj else { vj, tj, dj } = aj
 
-    if ((typeof ti is 'string') and (typeof vj is ti)) or ((typeof ti is 'function') and (vj instanceof ti))
+    if (
+      ((typeof ti is 'string') and (typeof vj is ti)) or
+      ((typeof ti is 'function') and (vj instanceof ti))
+    )
       r.push vj
       i += 1
       j += 1
