@@ -28,6 +28,23 @@ Left-shift optional function arguments:
     find ->                  # [ 'N/A', {}, -> ]
     find()                   # [ 'N/A', {}, undefined ]
 
+More advanced example is using JSON criteria for MongoDB-like criteria queries:
+
+      d = ->
+      f = (onoff, msg, done) ->
+        [ onoff, msg, done ] = $.lshift [
+          [ onoff, { $in: [ 'on', 'off' ] }, 'off' ]
+          [ msg, 'string', null ]
+          [ done, 'function' ]
+        ]
+        [ onoff, msg, done ]
+
+      assert.deepEqual [ 'off', null, d ], f d
+      assert.deepEqual [ 'on', null, d ], f 'on', d
+      assert.deepEqual [ 'off', null, d ], f 'off', d
+      assert.deepEqual [ 'off', 'message', d ], f 'message', d
+      assert.deepEqual [ 'on', 'message', d ], f 'on', 'message', d
+
 See specs for more usage examples.
 
 ## License
