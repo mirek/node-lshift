@@ -10,6 +10,9 @@ matches = (a, t) ->
         when 'undefined', 'boolean', 'number', 'string', 'symbol', 'function', 'object'
           typeof a is t
 
+        when 'array'
+          Array.isArray a
+
         when 'object!'
           a? and typeof a is 'object'
 

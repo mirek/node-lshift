@@ -75,3 +75,22 @@ describe 'lshift', ->
       assert.deepEqual [ 'off', null, d ], f 'off', d
       assert.deepEqual [ 'off', 'message', d ], f 'message', d
       assert.deepEqual [ 'on', 'message', d ], f 'on', 'message', d
+
+  describe 'other tests', ->
+
+    it 'should work with array', ->
+
+      d = ->
+      f = (str, arr, func) ->
+        [ str, arr, func ] = $.lshift [
+          [ str, 'string', 'foo' ]
+          [ arr, 'array', [] ]
+          [ func, 'function' ]
+        ]
+
+      assert.deepEqual [ 'foo', [], undefined ], f()
+      assert.deepEqual [ 'bar', [], undefined ], f 'bar'
+      assert.deepEqual [ 'foo', [ 1, 2, 3 ], undefined ], f [ 1, 2, 3]
+      assert.deepEqual [ 'foo', [], d ], f d
+      assert.deepEqual [ 'foo', [ 1 ], d ], f [ 1 ], d
+      assert.deepEqual [ 'bar', [ 1 ], d ], f 'bar', [ 1 ], d
