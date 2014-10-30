@@ -10,7 +10,7 @@ describe 'lshift', ->
       [ code, criteria, done ] = $.lshift [
         [ code, 'number', 200 ]
         [ criteria, 'object', {} ]
-        [ done, 'string' ]
+        [ done, $or: [ 'string', 'undefined' ] ]
       ]
       [ path_, code, criteria, done ]
 
@@ -32,7 +32,7 @@ describe 'lshift', ->
       [ oid, options, done ] = $.lshift [
         [ oid, 'string', 'N/A' ]
         [ options, 'object', {} ]
-        [ done, 'function' ]
+        [ done, $or: [ 'function', 'undefined' ] ]
       ]
       [ oid, options, done ]
 
@@ -65,7 +65,7 @@ describe 'lshift', ->
       f = (onoff, msg, done) ->
         [ onoff, msg, done ] = $.lshift [
           [ onoff, 'boolean', false ]
-          [ msg, 'string', null ]
+          [ msg, { $or: [ 'string', 'null' ] }, null ]
           [ done, 'function' ]
         ]
         [ onoff, msg, done ]
@@ -85,7 +85,7 @@ describe 'lshift', ->
         [ str, arr, func ] = $.lshift [
           [ str, 'string', 'foo' ]
           [ arr, 'array', [] ]
-          [ func, 'function' ]
+          [ func, $or: [ 'function', 'undefined' ] ]
         ]
 
       assert.deepEqual [ 'foo', [], undefined ], f()
@@ -94,3 +94,19 @@ describe 'lshift', ->
       assert.deepEqual [ 'foo', [], d ], f d
       assert.deepEqual [ 'foo', [ 1 ], d ], f [ 1 ], d
       assert.deepEqual [ 'bar', [ 1 ], d ], f 'bar', [ 1 ], d
+
+    it 'should work with flow example', ->
+
+      d = ->
+      f = (locals, functions, done) ->
+        [ locals, functions, done ] = $.lshift [
+          [ locals, { $and: [ 'object', $not: 'array' ] }, {} ]
+          [ functions, 'array', [] ]
+          [ done, $or: [ 'function', 'undefined' ] ]
+        ]
+
+      assert.deepEqual [ { foo: 1 }, [ d ], d ], f {foo:1}, [ d ], d
+      assert.deepEqual [ {}, [ d ], d ], f [ d ], d
+      assert.deepEqual [ {}, [ d ], d ], f [ d ], d
+      assert.deepEqual [ {}, [ d ], undefined ], f [ d ]
+      assert.deepEqual [ {foo:1}, [ d ], undefined ], f {foo:1}, [ d ]

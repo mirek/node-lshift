@@ -73,15 +73,17 @@ lshift = (as) ->
     if Array.isArray aj then [ vj, tj, dj ] = aj else { vj, tj, dj } = aj
 
     if test vj, ti
-      # console.log 'y', vj, ti
       r.push vj
       i += 1
       j += 1
     else
-      # console.log 'n'
       r.push di
       i += 1
-  # console.log r
+  unless n is r.length
+    throw new TypeError "Invalid number of arguments - expected #{n}, got #{r.length}."
+  for e, k in as
+    unless test r[k], e[1]
+      throw new TypeError "Argument #{k + 1} of #{n} doesn't match #{JSON.stringify e[1]}, the type is #{JSON.stringify typeof r[k]}."
   r
 
 # d = ->

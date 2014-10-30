@@ -35,6 +35,9 @@ describe 'test', ->
   it 'should test for functions', ->
     t (->), 'function'
     f null, 'function'
+    t undefined, $or: [ 'function', 'undefined' ]
+    t (->), $or: [ 'function', 'undefined' ]
+    f true, $or: [ 'function', 'undefined' ]
 
   it 'should test for $and, $or, $not', ->
     t 'foo', $and: [ 'string', $not: 'null' ]
