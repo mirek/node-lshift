@@ -1,29 +1,49 @@
 
-jc = require 'json-criteria'
-
-matches = (a, t) ->
-  switch typeof t
+# @param d Value
+# @param q Query
+# @return [Boolean]
+test = (d, q) ->
+  switch typeof q
 
     when 'string'
-      switch t
+      switch q
 
+        # Know
         when 'undefined', 'boolean', 'number', 'string', 'symbol', 'function', 'object'
-          typeof a is t
+          typeof d is q
 
+        # Extra pseudo-type for null check
+        when 'null'
+          not d?
+
+        # Extra pseudo-type for array check
         when 'array'
-          Array.isArray a
-
-        when 'object!'
-          a? and typeof a is 'object'
+          Array.isArray d
 
         else
-          a instanceof global[t]
+          if (klass = global[q])?
+            d instanceof klass
+          else
 
+            # TODO: Throw exception?
+            false
+
+    # Call function and force boolean result
     when 'function'
-      t a
+      not not q d
 
+    # Solve query
     when 'object'
-      jc.test a, t
+      s = true
+      for k, v of q
+        s = s and switch k
+          when '$and' then v.reduce ((p, c) -> p and test(d, c)), true
+          when '$or' then v.reduce ((p, c) -> p or test(d, c)), false
+          when '$nor' then v.reduce ((p, c) -> p and not test(d, c)), true
+          when '$not' then not test(d, v)
+          else test d, v
+        break unless s
+      s
 
     else
       false
@@ -52,7 +72,7 @@ lshift = (as) ->
     if Array.isArray ai then [ vi, ti, di ] = ai else { vi, ti, di } = ai
     if Array.isArray aj then [ vj, tj, dj ] = aj else { vj, tj, dj } = aj
 
-    if matches vj, ti
+    if test vj, ti
       # console.log 'y', vj, ti
       r.push vj
       i += 1
@@ -76,5 +96,6 @@ lshift = (as) ->
 # f d
 
 module.exports = {
+  test
   lshift
 }

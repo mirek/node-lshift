@@ -64,17 +64,17 @@ describe 'lshift', ->
       d = ->
       f = (onoff, msg, done) ->
         [ onoff, msg, done ] = $.lshift [
-          [ onoff, { $in: [ 'on', 'off' ] }, 'off' ]
+          [ onoff, 'boolean', false ]
           [ msg, 'string', null ]
           [ done, 'function' ]
         ]
         [ onoff, msg, done ]
 
-      assert.deepEqual [ 'off', null, d ], f d
-      assert.deepEqual [ 'on', null, d ], f 'on', d
-      assert.deepEqual [ 'off', null, d ], f 'off', d
-      assert.deepEqual [ 'off', 'message', d ], f 'message', d
-      assert.deepEqual [ 'on', 'message', d ], f 'on', 'message', d
+      assert.deepEqual [ false, null, d ], f d
+      assert.deepEqual [ true, null, d ], f true, d
+      assert.deepEqual [ false, null, d ], f false, d
+      assert.deepEqual [ false, 'message', d ], f 'message', d
+      assert.deepEqual [ true, 'message', d ], f true, 'message', d
 
   describe 'other tests', ->
 
